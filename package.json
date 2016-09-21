@@ -1,0 +1,7 @@
+{
+  "name": "userManager",
+  "description": "User Manager panel extention",
+  "author": "Nur Bar <nbfbce@ymail.com>",
+  "license": "MIT",
+  "type": "kirby-plugin"
+}
