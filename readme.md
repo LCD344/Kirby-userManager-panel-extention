@@ -1,4 +1,4 @@
-# Kirby Fieldtoggle
+# Kirby User Manager Panel Extention
 
 This is a panel extention that allows you to see users in a datatable. it also allows you to set a custom folder for users (in case you don't want to mix your users with your admins) - lastly if you use a custom folder you can use @ and . in user names.
 
