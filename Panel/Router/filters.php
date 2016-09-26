@@ -1,5 +1,5 @@
 <?php
-	namespace lcd344;
+	namespace lcd344\Panel\Router;
 
 	use Kirby\Panel\Installer;
 

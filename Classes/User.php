@@ -12,5 +12,6 @@
 	class User extends \User {
 
 		use ExtendedUser;
+		use Mailable;
 
 	}

@@ -1,3 +1,3 @@
 <div class="modal-content">
-  <?php echo $form ?>
+  <?= $form ?>
 </div>

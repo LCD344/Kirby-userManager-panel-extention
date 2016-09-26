@@ -1,30 +1,33 @@
 <?php
+
+	$controllerName = \lcd344\Panel\Controllers\UserManagementController::class;
+
 	return [
 		[
 			'pattern' => 'userManagement',
 			'action' => 'index',
-			'controller' => 'lcd344\UserManagementController',
+			'controller' => $controllerName,
 			'method' => 'GET',
 			'filter' => ['auth', 'isInstalled']
 		],
 		[
 			'pattern' => 'userManagement/add',
 			'action' => 'add',
-			'controller' => 'lcd344\UserManagementController',
+			'controller' => $controllerName,
 			'filter' => 'auth',
 			'method' => 'POST|GET'
 		],
 		[
 			'pattern' => 'userManagement/(:all)/delete',
 			'action' => 'delete',
-			'controller' => 'lcd344\UserManagementController',
+			'controller' => $controllerName,
 			'filter' => 'auth',
 			'method' => 'POST|GET'
 		],
 		[
 			'pattern' => 'userManagement/(:all)/edit',
 			'action' => 'edit',
-			'controller' => 'lcd344\UserManagementController',
+			'controller' => $controllerName,
 			'filter'  => 'auth',
 			'method'  => 'POST|GET'
 		]

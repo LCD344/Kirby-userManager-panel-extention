@@ -6,7 +6,7 @@
 	 * Time: 1:57 AM
 	 */
 
-	namespace lcd344;
+	namespace lcd344\Panel\Stubs;
 
 
 	class NewUser {

@@ -9,21 +9,30 @@
 	namespace lcd344;
 
 
+	use dir;
+	use f;
+	use kirby;
+	use lcd344\Panel\Models\User as PanelUser;
+
 	trait ExtendedUsers {
 
 		public function __construct() {
 
-			$root = \kirby::instance()->roots()->accounts();
+			$root = kirby::instance()->roots()->accounts();
 			if(\c::get('userManager.folder',null) != null){
-				$root = \kirby::instance()->roots()->site() . DS . \c::get('userManager.folder');
+				$root = kirby::instance()->roots()->site() . DS . \c::get('userManager.folder');
 			}
 
-			foreach (\dir::read($root) as $file) {
+			foreach (dir::read($root) as $file) {
 
 				// skip invalid account files
-				if (\f::extension($file) != 'php') continue;
+				if (f::extension($file) != 'php') continue;
 
-				$user = new User(\f::name($file));
+				if(class_exists("panel")){
+					$user = new PanelUser(f::name($file));
+				} else {
+					$user = new User(f::name($file));
+				}
 				$this->append($user->username(), $user);
 
 			}
@@ -31,6 +40,11 @@
 		}
 
 		public function create($data) {
-			return User::create($data);
+
+			if(class_exists("panel")){
+				return PanelUser::create($data);
+			} else {
+				return User::create($data);
+			}
 		}
 	}

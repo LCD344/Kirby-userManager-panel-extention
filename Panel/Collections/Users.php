@@ -6,8 +6,12 @@
 	 * Time: 6:47 PM
 	 */
 
-	namespace lcd344;
+	namespace lcd344\Panel\Collections;
 
+
+	use Exception;
+	use lcd344\ExtendedUsers;
+	use lcd344\Panel\Models\User;
 
 	class Users extends \Kirby\Panel\Collections\Users {
 
@@ -16,7 +20,7 @@
 		public function create($data) {
 
 			if($data['password'] !== $data['passwordconfirmation']) {
-				throw new \Exception(l('users.form.error.password.confirm'));
+				throw new Exception(l('users.form.error.password.confirm'));
 			}
 
 			unset($data['passwordconfirmation']);

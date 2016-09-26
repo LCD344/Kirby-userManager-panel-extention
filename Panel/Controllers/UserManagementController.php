@@ -1,12 +1,18 @@
 <?php
-	namespace lcd344;
+	namespace lcd344\Panel\Controllers;
 
+	use Exception;
 	use Kirby\Panel\Controllers\Base;
+	use Kirby\Panel\Form;
+	use lcd344\Panel\Collections\Users;
+	use lcd344\Panel\Models\User;
+	use lcd344\Panel\Stubs\NewUser;
+	use lcd344\Panel\Stubs\View;
 
 	class UserManagementController extends Base {
 
 		public function __construct() {
-			\Kirby\Panel\Form::$root = array(
+			Form::$root = array(
 				'default' => panel()->roots->fields,
 				'custom' => panel()->kirby->roots()->fields()
 			);
@@ -17,7 +23,7 @@
 			$users = new Users();
 			$admin = panel()->user()->isAdmin();
 
-			echo $this->screen('index', $users, [
+			echo $this->screen('UserManager/index', $users, [
 				'users' => $users,
 				'admin' => $admin
 			]);
@@ -40,20 +46,20 @@
 
 				$data = $form->serialize();
 
-
 				try {
 					$users = new Users();
 					$users->create($data);
 					$self->notify(':)');
 					$self->redirect('userManagement');
-				} catch (\Exception $e) {
+				} catch (Exception $e) {
 					$self->alert($e->getMessage());
 				}
 
 			});
 
+			$form->cancel("userManagement");
 			$form->action(panel()->urls()->index() . '/userManagement/add');
-			echo $this->screen('edit', new NewUser(), [
+			echo $this->screen('UserManager/edit', new NewUser(), [
 				'user' => null,
 				'form' => $form,
 				'writable' => is_writable(kirby()->roots()->accounts()),
@@ -65,7 +71,7 @@
 		public function edit($username) {
 
 			$self = $this;
-			$user = new User("nbfbce@ymail.com");
+			$user = new User($username);
 
 			if (!panel()->user()->isAdmin() and !$user->isCurrent()) {
 				$this->redirect('users');
@@ -85,15 +91,16 @@
 					$user->update($data);
 					$self->notify(':)');
 					$self->redirect($user, 'edit');
-				} catch (\Exception $e) {
+				} catch (Exception $e) {
 					$self->alert($e->getMessage());
 				}
 
 			});
 
+			$form->cancel("userManagement");
 			$form->action(panel()->urls()->index() . "/userManagement/{$username}/edit");
 
-			echo $this->screen('edit', $user, array(
+			echo $this->screen('UserManager/edit', $user, array(
 				'user' => $user,
 				'form' => $form,
 				'writable' => is_writable(kirby()->roots()->accounts()),
@@ -123,14 +130,14 @@
 						$user->delete();
 						$self->notify(':)');
 						$self->redirect('userManagement');
-					} catch (\Exception $e) {
+					} catch (Exception $e) {
 						$form->alert($e->getMessage());
 					}
 
 				});
 
 				$form->action(panel()->urls()->index() . "/userManagement/{$username}/delete");
-				echo $this->modal('delete', compact('form'));
+				echo $this->modal('UserManager/delete', compact('form'));
 
 			}
 

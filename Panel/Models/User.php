@@ -6,11 +6,18 @@
 	 * Time: 6:41 PM
 	 */
 
-	namespace lcd344;
+	namespace lcd344\Panel\Models;
+
+	use a;
+	use Exception;
+	use lcd344\ExtendedUser;
+	use lcd344\Mailable;
+	use str;
 
 	class User extends \Kirby\Panel\Models\User {
 
 		use ExtendedUser;
+		use Mailable;
 
 		public function uri($action = 'edit') {
 			return 'userManagement/' . $this->username() . '/' . $action;
@@ -24,14 +31,14 @@
 
 			if (\c::get('userManager.folder', null) == null && $this->isLastAdmin()) {
 				// check the number of left admins to not delete the last one
-				throw new \Exception(l('users.delete.error.lastadmin'));
+				throw new Exception(l('users.delete.error.lastadmin'));
 			}
 
 			if ($avatar = $this->avatar()) {
 				$avatar->delete();
 			}
 			if (!\f::remove($this->file())) {
-				throw new \Exception('The account could not be deleted');
+				throw new Exception('The account could not be deleted');
 			}
 
 			// flush the cache in case if the user data is
@@ -56,9 +63,9 @@
 				unset($data['role']);
 			}
 
-			if (\str::length(\a::get($data, 'password')) > 0) {
-				if (\a::get($data, 'password') !== \a::get($data, 'passwordconfirmation')) {
-					throw new \Exception(l('users.form.error.password.confirm'));
+			if (str::length(a::get($data, 'password')) > 0) {
+				if (a::get($data, 'password') !== a::get($data, 'passwordconfirmation')) {
+					throw new Exception(l('users.form.error.password.confirm'));
 				}
 			} else {
 				unset($data['password']);
