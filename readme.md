@@ -1,8 +1,8 @@
 # Kirby User Manager Panel Extention
 
-![Version](https://img.shields.io/badge/version-0.25.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
+![Version](https://img.shields.io/badge/version-0.26.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
 
-*Version 0.25.0*
+*Version 0.26.0*
 
 This plugin adds a user manager pages to the kirby panel. It uses datatables to allow you to search and filter your users, it also allows you to decide on a   custom user folder (To seperate users from admins and editors), also if you use the custom folder you can have usernames that include @ and .
 
@@ -88,6 +88,7 @@ The following options can be set in your `/site/config/config.php` file:
 ```php
 c::set("userManager.folder","users"); // set a custom folder
 
+c::set('userManager.mailer',false); // Turn of the panel side of the mailer extension.
 c::set('userManager.mailer.editor','yakme'); // set the mailers body field (only with mailer extention)
 c::set('userManager.mailer.drivers',["phpmailer" => "PHP Mailer","log" => "Logger"]); //set which drivers are availble to the mailer (by default it will include every possible one)
 
@@ -96,6 +97,10 @@ c::set('userManager.mailer.drivers',["phpmailer" => "PHP Mailer","log" => "Logge
 
 
 ## Changelog
+
+**0.26.0**
+
+- Option to turn off the mailer panel page, even if the extension exists
 
 **0.25.0**
 
@@ -109,7 +114,7 @@ c::set('userManager.mailer.drivers',["phpmailer" => "PHP Mailer","log" => "Logge
 - [ ] Stripe Extension
 - [ ] Users in db
 - [ ] Set table fields from options
-- [ ] Enable/disable mailer page from options
+- [x] Enable/disable mailer page from options
 
 ## Requirements
 

@@ -17,7 +17,7 @@
 					<?php if (!$user->isCurrent()) { ?>
 
 						<li>
-							<a href="<?= ((class_exists(lcd344\Mailer::class)) ? purl("userMailer/{$user->username()}") : "mailto: {$user->email()}") ?>">
+							<a href="<?= ((class_exists(lcd344\Mailer::class) && \c::get("userManager.mailer",true)) ? purl("userMailer/{$user->username()}") : "mailto:{$user->email()}") ?>">
 								<?php i('envelope-square', 'left') . _l('users.form.options.message') ?>
 							</a>
 						</li>
