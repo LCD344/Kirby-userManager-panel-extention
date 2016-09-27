@@ -59,6 +59,12 @@
 		responsive: true,
 		autoWidth: false
 	});
+	userManagement.on('page.dt processing.dt order.dt',function(){
+		$(".paginate_button").attr("href","#");
+	});
+	$(document).ready(function(){
+		$(".paginate_button").attr("href","#");
+	});
 
 	$("input[type='text'], textarea").css('cursor', "text");
 	$("select").css('cursor', "pointer");

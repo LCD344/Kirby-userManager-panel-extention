@@ -88,9 +88,10 @@
 		responsive: true,
 		autoWidth: false
 	});
+	userManagement.on('page.dt processing.dt order.dt',function(){
+		$(".paginate_button").attr("href","#");
+	});
 	$(document).ready(function(){
-		$(window).resize(function(){
-
-		});
+		$(".paginate_button").attr("href","#");
 	});
 </script>
