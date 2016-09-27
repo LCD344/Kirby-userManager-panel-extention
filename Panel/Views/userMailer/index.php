@@ -55,12 +55,14 @@
 
 <script>
 	//TODO make sent message works when there are attachments
-	var userManagement = $('#userManagement').DataTable({
+	$('#userManagement').on('init page.dt processing.dt order.dt draw.dt', function () {
+		$(".paginate_button").attr("href", "#");
+		$(".paginate_button").bind('click', function (e) {
+			e.preventDefault();
+		});
+	}).DataTable({
 		responsive: true,
 		autoWidth: false
-	});
-	userManagement.on('init page.dt processing.dt order.dt',function(){
-		$(".paginate_button").attr("href","#");
 	});
 
 	$("input[type='text'], textarea").css('cursor', "text");
