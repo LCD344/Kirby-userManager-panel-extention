@@ -54,7 +54,7 @@
 </div>
 
 <script>
-	//TODO make sent message works when there are attachments
+
 	$('#userManagement').on('init page.dt processing.dt order.dt draw.dt', function () {
 		$(".paginate_button").attr("href", "#");
 		$(".paginate_button").bind('click', function (e) {
@@ -67,8 +67,9 @@
 
 	$("input[type='text'], textarea").css('cursor', "text");
 	$("select").css('cursor', "pointer");
+	Dropzone.autoDiscover = false;
 
-	Dropzone.options.dropzoneForm = {
+	new Dropzone(".dropzone",{
 		url: window.location.href,
 
 		addRemoveLinks: true,
@@ -87,16 +88,21 @@
 				if (dzClosure.getQueuedFiles().length > 0 && $('#form-field-subject').val() != '' && $('#form-field-body').val() != '') {
 					e.preventDefault();
 					e.stopPropagation();
+					$(".topbar").append('<div class="message message-is-alert"><span class="message-content" style="background-color: orange">Sending your email.</span><a href="' + window.location.href + '" class="message-toggle"><i>×</i></a></div>');
 					dzClosure.processQueue();
 				}
 			});
 
 
 			this.on("successmultiple", function (files, response) {
-				dzClosure.removeAllFiles(true);
+				app.content.replace(response.content,window.location.href);
 			});
 		}
-	}
+	});
+
+	$('#dropzoneForm').submit(function (e){
+		$(".topbar").append('<div class="message message-is-alert"><span class="message-content" style="background-color: orange">Sending your email.</span><a href="' + window.location.href + '" class="message-toggle"><i>×</i></a></div>');
+	});
 
 	function toggleCC() {
 		if ($('#form-field-driver').val() == "phpmailer") {
@@ -110,6 +116,5 @@
 
 	toggleCC();
 	$('#form-field-driver').on('change', toggleCC);
-
 
 </script>

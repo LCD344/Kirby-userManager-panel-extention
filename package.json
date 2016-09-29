@@ -3,6 +3,6 @@
   "description": "User Manager panel extention",
   "author": "Nur Bar <nbfbce@ymail.com>",
   "license": "MIT",
-  "type": "kirby-plugin"
-  "version": "0.26.5"
+  "type": "kirby-plugin",
+  "version": "0.3.0"
 }

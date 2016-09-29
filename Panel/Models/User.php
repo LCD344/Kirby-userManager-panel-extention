@@ -20,6 +20,9 @@
 		use Mailable;
 
 		public function uri($action = 'edit') {
+			if($action == "email"){
+				return "userMailer/{$this->username()}";
+			}
 			return 'userManagement/' . $this->username() . '/' . $action;
 		}
 
@@ -70,8 +73,6 @@
 			} else {
 				unset($data['password']);
 			}
-
-			unset($data['passwordconfirmation']);
 
 			if ($this->isLastAdmin() and a::get($data, 'role') !== 'admin') {
 				// check the number of left admins to not convert the last one

@@ -14,4 +14,15 @@
 		use ExtendedUser;
 		use Mailable;
 
+		public function login($password){
+			if($this->expiration()){
+				$curdate = strtotime(date("Y-m-d"));
+				$expire = strtotime($this->expiration());
+				if($curdate > $expire){
+					return false;
+				}
+			}
+
+			return parent::login($password);
+		}
 	}

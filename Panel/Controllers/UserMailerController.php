@@ -8,6 +8,7 @@
 
 	namespace lcd344\Panel\Controllers;
 
+	use Error;
 	use Exception;
 	use Kirby\Panel\Controllers\Base;
 	use Kirby\Panel\Form;
@@ -37,17 +38,25 @@
 				try {
 					$mailer = $user->createMail($data['driver']);
 					if ($data['driver'] == 'phpmailer') {
-						$mailer->cc(explode(',', $data['cc']));
-						$mailer->bcc(explode(',', $data['bcc']));
+						if(trim($data['cc'] != '')){
+							$mailer->cc(explode(',', $data['cc']));
+						}
+						if(trim($data['bcc'] != '')){
+							$mailer->bcc(explode(',', $data['bcc']));
+						}
 						if(isset($_FILES['file'])){
 							for($i = 0; $i < count($_FILES['file']['name']);$i++){
 								$mailer->attach([$_FILES['file']['tmp_name'][$i], $_FILES['file']['name'][$i]]);
 							}
 						}
 					}
-					$mailer->send($data['subject'], kirbytext($data['body']));
-					$self->notify('Email Sent To ' . $user->username());
-				} catch (Exception $e) {
+					if($mailer->send($data['subject'], kirbytext($data['body']))){
+						$self->notify('Email Sent To ' . $user->username());
+					} else {
+						$self->alert("Could not send email.");
+					}
+
+				} catch (Error $e) {
 					$self->alert($e->getMessage());
 				}
 			});

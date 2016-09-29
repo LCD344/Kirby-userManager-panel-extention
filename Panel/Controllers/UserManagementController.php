@@ -1,9 +1,11 @@
 <?php
 	namespace lcd344\Panel\Controllers;
 
+	use c;
 	use Exception;
 	use Kirby\Panel\Controllers\Base;
 	use Kirby\Panel\Form;
+	use lcd344\Mailer;
 	use lcd344\Panel\Collections\Users;
 	use lcd344\Panel\Models\User;
 	use lcd344\Panel\Stubs\NewUser;
@@ -23,9 +25,17 @@
 			$users = new Users();
 			$admin = panel()->user()->isAdmin();
 
+			$fields = c::get("userManager.fields",[
+				"Avatar" => "Avatar",
+				"Username" => ["name" => "Username", 'action' => "edit", 'element' => "strong", 'class' => "item-title"],
+				"Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
+				"Role" => "Role"
+			]);
+
 			echo $this->screen('UserManager/index', $users, [
 				'users' => $users,
-				'admin' => $admin
+				'admin' => $admin,
+				'fields' => $fields
 			]);
 		}
 

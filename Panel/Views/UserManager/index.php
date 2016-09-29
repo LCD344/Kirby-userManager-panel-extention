@@ -23,10 +23,9 @@
 		<table id="userManagement">
 			<thead>
 			<tr>
-				<td>Avatar</td>
-				<td>Username</td>
-				<td>Email</td>
-				<td>Role</td>
+				<?php foreach ($fields as $field => $val) { ?>
+					<td><?= $field ?></td>
+				<?php } ?>
 				<?php if ($admin || $user->isCurrent()) { ?>
 					<td></td>
 					<td></td>
@@ -36,43 +35,48 @@
 			<tbody>
 			<?php foreach ($users as $user) { ?>
 				<tr>
-					<td>
-						<a class="item-image-container" href="<?php __($user->url('edit')) ?>">
-							<img src="<?php __($user->avatar(50)->url()) ?>" alt="<?php __($user->username()) ?>">
-						</a>
-					</td>
-					<td>
-						<a href="<?php __($user->url('edit')) ?>">
-							<strong class="item-title"><?php __($user->username()) ?></strong>
-						</a>
-					</td>
-					<td>
-						<?php __($user->email()) ?>
-					</td>
-					<td>
-						<?php __($user->role()->name()) ?>
-					</td>
-					<?php if ($admin || $user->isCurrent()) { ?>
+					<?php foreach ($fields as $field) { ?>
 						<td>
-							<a class="btn btn-with-icon" href="<?php __($user->url('edit')) ?>">
-								<?php i('pencil', 'left') . _l('users.index.edit') ?>
-							</a>
+							<?php if (is_array($field)) {
+								if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') {
+									?>
+									<a href="<?php __($user->url($field['action'])) ?>">
+								<?php } ?>
+								<?= (isset($field['element']) ? "<{$field['element']} " : "") ?><?= (isset($field['class']) ? "class=\"{$field['class']}\" " : "") ?><?= (isset($field['element']) ? ">" : "") ?><?php  __($user->{$field['name']}()) ?><?= (isset($field['element']) ? "</{$field['element']}>" : "") ?>
+								<?php if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') { ?>
+									</a>
+								<?php }
+							} else if ($field == "Avatar") { ?>
+								<a class="item-image-container" href="<?php __($user->url('edit')) ?>">
+									<img src="<?php __($user->avatar(50)->url()) ?>"
+										 alt="<?php __($user->username()) ?>">
+								</a>
+							<?php } else { ?>
+								<?php __($user->$field()) ?>
+							<?php } ?>
 						</td>
-						<td>
-							<a data-modal class="btn btn-with-icon" href="<?php __($user->url('delete')) ?>">
-								<?php i('trash-o', 'left') . _l('users.index.delete') ?>
-							</a>
-						</td>
-					<?php } ?>
+						<?php
+					}
+						if ($admin || $user->isCurrent()) { ?>
+							<td>
+								<a class="btn btn-with-icon" href="<?php __($user->url('edit')) ?>">
+									<?php i('pencil', 'left') . _l('users.index.edit') ?>
+								</a>
+							</td>
+							<td>
+								<a data-modal class="btn btn-with-icon" href="<?php __($user->url('delete')) ?>">
+									<?php i('trash-o', 'left') . _l('users.index.delete') ?>
+								</a>
+							</td>
+						<?php } ?>
 				</tr>
 			<?php } ?>
 			</tbody>
 			<tfoot>
 			<tr>
-				<td>Avatar</td>
-				<td>Username</td>
-				<td>Email</td>
-				<td>Role</td>
+				<?php foreach ($fields as $field => $val) { ?>
+					<td><?= $field ?></td>
+				<?php } ?>
 				<?php if ($admin || $user->isCurrent()) { ?>
 					<td></td>
 					<td></td>

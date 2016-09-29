@@ -1,8 +1,8 @@
 # Kirby User Manager Panel Extention
 
-![Version](https://img.shields.io/badge/version-0.26.5-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
+![Version](https://img.shields.io/badge/version-0.3.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
 
-*Version 0.26.5*
+*Version 0.3.0*
 
 This plugin adds a user manager pages to the kirby panel. It uses datatables to allow you to search and filter your users, it also allows you to decide on a   custom user folder (To seperate users from admins and editors), also if you use the custom folder you can have usernames that include @ and .
 
@@ -56,7 +56,7 @@ You can use the panel side normally - all the options are identical to the kirby
 On the site you can get a user instance (in case you want to use an extension or you use a custom folder) by instatiating a new user instance with
 
 ```php
-new lcd344\user()
+new lcd344\user($username)
 ```
 
 You can also get a users collection with
@@ -65,6 +65,17 @@ You can also get a users collection with
 new lcd344\users()
 ```
 
+If a user has a field called expiration, then when you try to log in the user:
+
+```php
+$user = new lcd344\user($username);
+$user->login($password);
+```
+Then the login function will return false if the current date is bigger than the user expiration field.
+
+#### Modules:
+
+###### Mailer
 If you have the Mailer extension then you can also use the next syntax to email the user
 
 ```php
@@ -88,15 +99,47 @@ The following options can be set in your `/site/config/config.php` file:
 ```php
 c::set("userManager.folder","users"); // set a custom folder
 
+c::set("userManager.fields",[ //
+    "Username" => ["name" => "Username", 'action' => "edit", 'element' => "strong", 'class' => "item-title"],
+    "Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
+    "Role" => "Role"
+])
+
 c::set('userManager.mailer',false); // Turn of the panel side of the mailer extension.
 c::set('userManager.mailer.editor','yakme'); // set the mailers body field (only with mailer extention)
 c::set('userManager.mailer.drivers',["phpmailer" => "PHP Mailer","log" => "Logger"]); //set which drivers are availble to the mailer (by default it will include every possible one)
 
 ```
 
+## Notable Options
 
+
+```php
+c::set("userManager.fields",[ 
+    "Avatar" => "Avatar",
+    "Username" => ["name" => "Username", 'action' => "edit", 'element' => "strong", 'class' => "item-title"],
+    "Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
+    "Role" => "Role"
+])
+```
+
+This option gets an array of the fields to show in the datatable.
+There are two options:
+1) A normal key value pair, in this case, the kay represents the text at the top of the table, the value is the name of the value on the user object.
+2) A key and an array, the key is the label at the top of the table, while the array sets up the display element.
+ - The name will stand for the name on the object.
+ - Action will create a link (you can choose email or edit)
+ - Element will be the element type
+ - Class will be the elements class. (this is available only when specifying element).
+ 
+ All of the options are optional. Note: Avatar value is set especially to display the avatar.
 
 ## Changelog
+
+**0.3.0**
+
+- Added an option to set datatable fields
+- Added User expiration support
 
 **0.26.5**
 
@@ -117,8 +160,9 @@ c::set('userManager.mailer.drivers',["phpmailer" => "PHP Mailer","log" => "Logge
 - [ ] Mailchimp Extension
 - [ ] Stripe Extension
 - [ ] Users in db
-- [ ] Set table fields from options
-- [ ] Add user expiration field
+- [ ] Include user permissions once kirby 2.4 is released
+- [x] Set table fields from options
+- [x] Add user expiration field
 - [x] Enable/disable mailer page from options
 
 ## Requirements
