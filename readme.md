@@ -1,8 +1,8 @@
 # Kirby User Manager Panel Extention
 
-![Version](https://img.shields.io/badge/version-0.3.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
+![Version](https://img.shields.io/badge/version-0.3.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
 
-*Version 0.3.0*
+*Version 0.3.1*
 
 This plugin adds a user manager pages to the kirby panel. It uses datatables to allow you to search and filter your users, it also allows you to decide on a   custom user folder (To seperate users from admins and editors), also if you use the custom folder you can have usernames that include @ and .
 
@@ -46,7 +46,7 @@ This plugin works out of the books by adding a User Manager widget to your panel
 
 Current list of extensions:
 
-[Mailer](https://github.com/LCD344/kirby-mailer-wrapper) - Installing this plugin will add a premitive mailer that will work with your users, when you click the "send email" button in a user's screen the mailer will open, mail options depend on setup described below.
+[Mailer](https://github.com/LCD344/kirby-mailer-wrapper) - Installing this plugin will add a primitive mailer inside the panel that will work with your users, when you click the "send email" button in a user's screen the mailer will open, mail options depend on setup described below.
 
 
 ## Usage
@@ -87,6 +87,15 @@ $user->createMail() //this line returns a Mailer instance with the $to field set
 $mailer = $user->createMail($driver,$options)
 $mailer->send('subject','body');
 ```
+
+The data of the user will be automatically bound to the mailer and you can inject it to the body using mustaches.
+ For example the next code snippet will email the username to the user's email.
+
+```php
+$user->createMail() 
+    ->send("subject","{{username}}");    
+```
+
 
 Note - the attachments in the mailer screen in panel only work with phpmailer driver.
 

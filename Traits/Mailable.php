@@ -19,6 +19,7 @@
 			if(class_exists(Mailer::class)){
 				$this->mailer = new Mailer($service,$options);
 				$this->mailer->to($this->email());
+				$this->mailer->bind($this->data());
 
 				return $this->mailer;
 			}
