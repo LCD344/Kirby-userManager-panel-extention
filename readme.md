@@ -145,6 +145,10 @@ There are two options:
 
 ## Changelog
 
+**0.3.1**
+
+- Automatically bound user's data to email when using mailer. 
+
 **0.3.0**
 
 - Added an option to set datatable fields
