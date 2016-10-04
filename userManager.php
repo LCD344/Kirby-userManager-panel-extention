@@ -23,8 +23,6 @@
 		require_once __DIR__ .  DS .'Panel/Stubs/NewUser.php';
 		require_once __DIR__ .  DS .'Panel/Stubs/UserMailer.php';
 		if(c::get('userManager.database',false)) {
-			require_once __DIR__ . DS . 'Panel/Stubs/Avatar.php';
-			require_once __DIR__ . DS . 'Panel/Stubs/Blueprint.php';
 			require_once __DIR__ . DS . 'Panel/Models/DBUser.php';
 			require_once __DIR__ . DS . 'Panel/Collections/DBUsers.php';
 		} else {
