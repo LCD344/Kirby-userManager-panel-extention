@@ -1,8 +1,8 @@
 # Kirby User Manager Panel Extention
 
-![Version](https://img.shields.io/badge/version-0.3.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
+![Version](https://img.shields.io/badge/version-0.4.5-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
 
-*Version 0.3.1*
+*Version 0.4.5*
 
 This plugin adds a user manager pages to the kirby panel. It uses datatables to allow you to search and filter your users, it also allows you to decide on a   custom user folder (To seperate users from admins and editors), also if you use the custom folder you can have usernames that include @ and .
 
@@ -96,14 +96,32 @@ $user->createMail()
     ->send("subject","{{username}}");    
 ```
 
-
 Note - the attachments in the mailer screen in panel only work with phpmailer driver.
 
 For the full instructions for the Mailer go to the [Mailer](https://github.com/LCD344/kirby-mailer-wrapper) git page.
 
+
+###### Database
+
+Now you can save users into a database! For now we are limited only to a table called "users" but I will look into it (or you can edit the source code just a little bit).
+
+I rewrote the lcd344/user and lcd344/users classes to keep the same API that kirby naturally uses, to prevent breakages. But this db layer is built on top of [illuminate/database](https://github.com/illuminate/database) which is an excellent ORM in my opinion. 
+
+If you want to use the ORM directly, then you can use it with UserModel class for example
+
+```php
+UsersModel::where('username','john')->first();
+```
+
+Full documentation of the ORM is in [Laravel eloquent](https://laravel.com/docs/5.3/eloquent)
+
+Details about enabling the bd are in the options section of this readme.
+
 ## Options
 
 The following options can be set in your `/site/config/config.php` file:
+
+User Manager in general
 
 ```php
 c::set("userManager.folder","users"); // set a custom folder
@@ -113,10 +131,33 @@ c::set("userManager.fields",[ //
     "Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
     "Role" => "Role"
 ])
+```
 
+Mailer extension
+
+```php
 c::set('userManager.mailer',false); // Turn of the panel side of the mailer extension.
 c::set('userManager.mailer.editor','yakme'); // set the mailers body field (only with mailer extention)
 c::set('userManager.mailer.drivers',["phpmailer" => "PHP Mailer","log" => "Logger"]); //set which drivers are availble to the mailer (by default it will include every possible one)
+```
+
+Database Extention
+
+```php
+	c::set("userManager.database",true); //enable extension, defult false
+	c::set("userManager.database.driver","mysql"); //db driver, available are: mysql, sqlite and pgsql, defults to mysql
+	c::set("userManager.database.host","localhost"); // db host, default localhost
+	c::set("userManager.database.db","userManager"); // database name
+	c::set("userManager.database.username","user"); // database username
+	c::set("userManager.database.password","pass"); // database password
+
+    // you need to set the next thing if you intend on using structures in the user form. The field in the db will have to be of type text.
+    
+	c::set("userManager.database.structures",[
+		'structureFieldName1' => 'array',
+		'structureFieldName2' => 'array'
+		...
+	]);
 
 ```
 
@@ -144,6 +185,10 @@ There are two options:
  All of the options are optional. Note: Avatar value is set especially to display the avatar.
 
 ## Changelog
+
+**0.4.5**
+- Added full structure support to all users.
+- Added DB extension.
 
 **0.3.1**
 

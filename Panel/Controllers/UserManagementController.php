@@ -10,6 +10,7 @@
 	use lcd344\Panel\Models\User;
 	use lcd344\Panel\Stubs\NewUser;
 	use lcd344\Panel\Stubs\View;
+	use Router;
 
 	class UserManagementController extends Base {
 
@@ -25,7 +26,7 @@
 			$users = new Users();
 			$admin = panel()->user()->isAdmin();
 
-			$fields = c::get("userManager.fields",[
+			$fields = c::get("userManager.fields", [
 				"Avatar" => "Avatar",
 				"Username" => ["name" => "Username", 'action' => "edit", 'element' => "strong", 'class' => "item-title"],
 				"Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
@@ -96,11 +97,11 @@
 				}
 
 				$data = $form->serialize();
-
 				try {
 					$user->update($data);
 					$self->notify(':)');
-					$self->redirect($user, 'edit');
+					$url = $user->uri('edit');
+					$self->redirect($url);
 				} catch (Exception $e) {
 					$self->alert($e->getMessage());
 				}
@@ -155,6 +156,61 @@
 
 		public function view($file, $data = array()) {
 			return new View($file, $data);
+		}
+
+		public function fields($username, $fieldName, $fieldType, $path) {
+
+			$user = new User($username);
+			$form = $user->form('user', function () {
+			});
+
+			$field = $form->fields()->$fieldName;
+
+
+			if (!$field or $field->type() !== $fieldType) {
+				throw new Exception('Invalid field');
+			}
+
+			$routes = $field->routes();
+			$router = new Router($routes);
+
+			if ($route = $router->run($path)) {
+
+				if (is_callable($route->action()) and is_a($route->action(), 'Closure')) {
+					return call($route->action(), $route->arguments());
+				} else {
+
+					$controllerFile = $field->root() . DS . 'controller.php';
+					$controllerName = $fieldType . 'FieldController';
+
+					if (!file_exists($controllerFile)) {
+						throw new Exception(l('fields.error.missing.controller'));
+					}
+
+					require_once($controllerFile);
+
+					if (!class_exists($controllerName)) {
+						throw new Exception(l('fields.error.missing.class'));
+					}
+
+					$controller = new $controllerName($user, $field);
+					$result = call([$controller, $route->action()], $route->arguments());
+
+					$response = $result->content();
+					$response = str_replace('class=\"form\"','class=\"form\" ' . 'action=\"' . $_SERVER['REQUEST_URI'] . '\"',$response);
+
+					echo \Response::json($response);
+
+/*					$form = $result->_data['content']->_data['form'];
+					$form->action($_SERVER['REQUEST_URI']);*/
+					exit();
+
+				}
+
+			} else {
+				throw new Exception(l('fields.error.route.invalid'));
+			}
+
 		}
 
 	}

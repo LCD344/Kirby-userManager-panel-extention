@@ -4,6 +4,13 @@
 
 	return [
 		[
+			'pattern' => 'userManagement/(:all)/field/(:any)/(:any)/(:all)',
+			'action' => 'fields',
+			'controller' => $controllerName,
+			'filter' => 'auth',
+			'method' => 'GET|POST'
+		],
+		[
 			'pattern' => 'userManagement',
 			'action' => 'index',
 			'controller' => $controllerName,

@@ -22,6 +22,7 @@
 
 			// check if the account file exists
 			if(!file_exists($this->file())) {
+				echo $this->username;
 				throw new Exception('The user account could not be found');
 			}
 
