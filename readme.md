@@ -1,6 +1,6 @@
 # Kirby User Manager Panel Extention
 
-![Version](https://img.shields.io/badge/version-0.4.5-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
+![Version](https://img.shields.io/badge/version-0.4.6-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
 
 *Version 0.4.5*
 
@@ -124,7 +124,9 @@ The following options can be set in your `/site/config/config.php` file:
 User Manager in general
 
 ```php
-c::set("userManager.folder","users"); // set a custom folder
+c::set("userManager.folder","users"); // set a custom 
+
+c::set('userManager.roles',['editor']); //can only create editor type user
 
 c::set("userManager.fields",[ //
     "Username" => ["name" => "Username", 'action' => "edit", 'element' => "strong", 'class' => "item-title"],
@@ -185,6 +187,9 @@ There are two options:
  All of the options are optional. Note: Avatar value is set especially to display the avatar.
 
 ## Changelog
+
+**0.4.6**
+- It is now possible to specify what roles can be created in the manager.
 
 **0.4.5**
 - Added full structure support to all users.

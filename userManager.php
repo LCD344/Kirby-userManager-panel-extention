@@ -1,6 +1,7 @@
 <?php
 
 	require_once __DIR__ . '/Traits/Mailable.php';
+	$kirby->set('field', 'usermailchimp', __DIR__ . '/mailchimp/fields/usermailchimp');
 
 	if(c::get('userManager.database',false)) {
 		require_once  __DIR__ . '/vendor/autoload.php';
@@ -13,6 +14,9 @@
 		require_once __DIR__ . '/Traits/ExtendedUser.php';
 		require_once __DIR__ . '/Traits/ExtendedUsers.php';
 	}
+
+
+	require_once  __DIR__ . '/vendor/autoload.php';
 
 	if (class_exists('panel')) {
 		require_once __DIR__ . DS . 'Panel/Helpers/helpers.php';

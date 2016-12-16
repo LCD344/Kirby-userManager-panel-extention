@@ -25,6 +25,10 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
             'Illuminate\\Contracts\\' => 21,
             'Illuminate\\Container\\' => 21,
         ),
+        'D' => 
+        array (
+            'DrewM\\MailChimp\\' => 16,
+        ),
         'C' => 
         array (
             'Carbon\\' => 7,
@@ -55,6 +59,10 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
         'Illuminate\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/container',
+        ),
+        'DrewM\\MailChimp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/drewm/mailchimp-api/src',
         ),
         'Carbon\\' => 
         array (

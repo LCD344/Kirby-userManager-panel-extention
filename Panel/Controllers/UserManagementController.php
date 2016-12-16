@@ -47,7 +47,7 @@
 			}
 			$self = $this;
 
-			$form = $this->form('users/user', null, function ($form) use ($self) {
+			$form = $this->form(__DIR__ . DS . '../Forms/user.php', null, function ($form) use ($self) {
 
 				$form->validate();
 
@@ -88,7 +88,7 @@
 				$this->redirect('users');
 			}
 
-			$form = $user->form('user', function ($form) use ($user, $self) {
+			$form = $this->form(__DIR__ . DS . '../Forms/user.php', $user, function ($form) use ($user, $self) {
 
 				$form->validate();
 
@@ -167,6 +167,7 @@
 			$field = $form->fields()->$fieldName;
 
 
+
 			if (!$field or $field->type() !== $fieldType) {
 				throw new Exception('Invalid field');
 			}
@@ -180,7 +181,12 @@
 					return call($route->action(), $route->arguments());
 				} else {
 
-					$controllerFile = $field->root() . DS . 'controller.php';
+					if($fieldType != "usermailchimp"){
+						$controllerFile = $field->root() . DS . 'controller.php';
+					} else {
+						$kirby = kirby();
+						$controllerFile = $kirby->roots->plugins() . '/userManager/mailchimp/fields/usermailchimp/controller.php';
+					}
 					$controllerName = $fieldType . 'FieldController';
 
 					if (!file_exists($controllerFile)) {

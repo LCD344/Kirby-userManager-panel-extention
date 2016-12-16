@@ -1,0 +1,12 @@
+
+.usermailchimp-entry > .structure-delete-button {
+    float: right;
+    border-left: 1px dashed;
+    position: absolute;
+    right: 1%;
+    padding: inherit;
+    margin-top: -11px;
+    border-bottom: none;
+    z-index: 100;
+    background-color: inherit;
+}
