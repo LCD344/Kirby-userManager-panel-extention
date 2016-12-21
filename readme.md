@@ -59,6 +59,12 @@ On the site you can get a user instance (in case you want to use an extension or
 new lcd344\user($username)
 ```
 
+To get the current user you should use a static method on the lcd344\user class - it will return the current user, which might also be from the normal kirby user class
+
+```php
+$user lcd344\user::current()
+```
+
 You can also get a users collection with
 
 ```php
@@ -187,6 +193,9 @@ There are two options:
  All of the options are optional. Note: Avatar value is set especially to display the avatar.
 
 ## Changelog
+
+**0.4.7**
+- You can now reliabl get the current user.
 
 **0.4.6**
 - It is now possible to specify what roles can be created in the manager.

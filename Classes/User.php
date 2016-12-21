@@ -1,28 +1,60 @@
 <?php
-	/**
-	 * Created by PhpStorm.
-	 * User: lcd34
-	 * Date: 9/9/2016
-	 * Time: 7:31 PM
-	 */
+/**
+ * Created by PhpStorm.
+ * User: lcd34
+ * Date: 9/9/2016
+ * Time: 7:31 PM
+ */
 
-	namespace lcd344;
+namespace lcd344;
 
 
-	class User extends \User {
+use cookie;
+use Exception;
+use S;
 
-		use ExtendedUser;
-		use Mailable;
+class User extends \User {
 
-		public function login($password){
-			if($this->expiration()){
-				$curdate = strtotime(date("Y-m-d"));
-				$expire = strtotime($this->expiration());
-				if($curdate > $expire){
-					return false;
-				}
-			}
+	use ExtendedUser;
+	use Mailable;
 
-			return parent::login($password);
+	static public function current() {
+
+		$cookey = cookie::get(s::$name . '_auth');
+		$username = s::get('kirby_auth_username');
+
+		if (empty($cookey)) {
+			static::unauthorize();
+
+			return false;
+		}
+
+		if (s::get('kirby_auth_secret') !== sha1($username . $cookey)) {
+			static::unauthorize();
+
+			return false;
+		}
+
+		// find the logged in user by token
+		try {
+			$user = new static($username);
+
+			return $user;
+		} catch (Exception $e) {
+			return site()->user();
 		}
 	}
+
+
+	public function login($password) {
+		if ($this->expiration()) {
+			$curdate = strtotime(date("Y-m-d"));
+			$expire = strtotime($this->expiration());
+			if ($curdate > $expire) {
+				return false;
+			}
+		}
+
+		return parent::login($password);
+	}
+}

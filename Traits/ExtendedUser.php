@@ -22,7 +22,6 @@
 
 			// check if the account file exists
 			if(!file_exists($this->file())) {
-				echo $this->username;
 				throw new Exception('The user account could not be found');
 			}
 
@@ -37,7 +36,7 @@
 			static::validate($data, 'insert');
 
 			// create the file root
-			$filePath = kirby::instance()->roots()->accounts() . DS . \c::get('userManager.folder');
+			$filePath = kirby::instance()->roots()->accounts();
 			if(\c::get('userManager.folder',null) != null){
 				$filePath = kirby::instance()->roots()->site() . DS . \c::get('userManager.folder');
 			}

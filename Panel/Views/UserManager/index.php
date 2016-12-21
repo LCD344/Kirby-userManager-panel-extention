@@ -51,9 +51,11 @@
 									<img src="<?php __($user->avatar(50)->url()) ?>"
 										 alt="<?php __($user->username()) ?>">
 								</a>
-							<?php } else { ?>
-								<?php __($user->$field()) ?>
-							<?php } ?>
+							<?php } else if ($field == "Role") {
+								__($user->role()->name());
+							} else {
+								__($user->$field());
+							} ?>
 						</td>
 						<?php
 					}
