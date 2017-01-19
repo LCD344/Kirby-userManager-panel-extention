@@ -238,7 +238,7 @@ There are two options:
 
 - [ ] Mailchimp Extension
 - [ ] Stripe Extension
-- [ ] Users in db
+- [x] Users in db
 - [ ] Include user permissions once kirby 2.4 is released
 - [x] Set table fields from options
 - [x] Add user expiration field
