@@ -5,88 +5,87 @@
 <?= js('//cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.js') ?>
 <div class="section">
 
-	<h2 class="hgroup hgroup-single-line cf">
+    <h2 class="hgroup hgroup-single-line cf">
     <span class="hgroup-title">
 		<?php _l('users.index.headline') ?>
-		<span class="counter">( <?= $users->count() ?> )</span>
+        <span class="counter">( <?= $users->count() ?> )</span>
     </span>
-		<?php if ($admin) { ?>
-			<span class="hgroup-options shiv shiv-dark shiv-left">
+		<?php if (panel()->user()->ui()->create()) { ?>
+            <span class="hgroup-options shiv shiv-dark shiv-left">
 			  <a title="+" data-shortcut="+" class="hgroup-option-right" href="<?php _u('userManagement/add') ?>">
 				<?php i('plus-circle', 'left') . _l('users.index.add') ?>
 			  </a>
 			</span>
 		<?php } ?>
-	</h2>
+    </h2>
 
-	<div>
-		<table id="userManagement">
-			<thead>
-			<tr>
+    <div>
+        <table id="userManagement">
+            <thead>
+            <tr>
 				<?php foreach ($fields as $field => $val) { ?>
-					<td><?= $field ?></td>
+                    <td><?= $field ?></td>
 				<?php } ?>
-				<?php if ($admin || $user->isCurrent()) { ?>
-					<td></td>
-					<td></td>
-				<?php } ?>
-			</tr>
-			</thead>
-			<tbody>
-			<?php foreach ($users as $user) { ?>
-				<tr>
+                <td></td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+			<?php
+			foreach ($users as $user) {
+				$read = $user->ui()->read(); ?>
+                <tr>
 					<?php foreach ($fields as $field) { ?>
-						<td>
+                        <td>
 							<?php if (is_array($field)) {
 								if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') {
 									?>
-									<a href="<?php __($user->url($field['action'])) ?>">
+                                    <a href="<?= $read ? $user->url($field['action']) : '#' ?>">
 								<?php } ?>
-								<?= (isset($field['element']) ? "<{$field['element']} " : "") ?><?= (isset($field['class']) ? "class=\"{$field['class']}\" " : "") ?><?= (isset($field['element']) ? ">" : "") ?><?php  __($user->{$field['name']}()) ?><?= (isset($field['element']) ? "</{$field['element']}>" : "") ?>
+								<?= (isset($field['element']) ? "<{$field['element']} " : "") ?><?= (isset($field['class']) ? "class=\"{$field['class']}\" " : "") ?><?= (isset($field['element']) ? ">" : "") ?><?php __($user->{$field['name']}()) ?><?= (isset($field['element']) ? "</{$field['element']}>" : "") ?>
 								<?php if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') { ?>
-									</a>
+                                    </a>
 								<?php }
 							} else if ($field == "Avatar") { ?>
-								<a class="item-image-container" href="<?php __($user->url('edit')) ?>">
-									<img src="<?php __($user->avatar(50)->url()) ?>"
-										 alt="<?php __($user->username()) ?>">
-								</a>
+                                <a class="item-image-container" href="<?= $read ? $user->url('edit') : '#' ?>">
+                                    <img src="<?php __($user->avatar(50)->url()) ?>"
+                                         alt="<?php __($user->username()) ?>">
+                                </a>
 							<?php } else if ($field == "Role") {
 								__($user->role()->name());
 							} else {
 								__($user->$field());
 							} ?>
-						</td>
-						<?php
-					}
-						if ($admin || $user->isCurrent()) { ?>
-							<td>
-								<a class="btn btn-with-icon" href="<?php __($user->url('edit')) ?>">
-									<?php i('pencil', 'left') . _l('users.index.edit') ?>
-								</a>
-							</td>
-							<td>
-								<a data-modal class="btn btn-with-icon" href="<?php __($user->url('delete')) ?>">
-									<?php i('trash-o', 'left') . _l('users.index.delete') ?>
-								</a>
-							</td>
+                        </td>
+					<?php } ?>
+                    <td>
+						<?php if ($read && $user->ui()->update()) { ?>
+                            <a class="btn btn-with-icon" href="<?php __($user->url('edit')) ?>">
+								<?php i('pencil', 'left') . _l('users.index.edit') ?>
+                            </a>
 						<?php } ?>
-				</tr>
+                    </td>
+                    <td>
+						<?php if ($read && $user->ui()->delete()) { ?>
+                            <a data-modal class="btn btn-with-icon" href="<?php __($user->url('delete')) ?>">
+								<?php i('trash-o', 'left') . _l('users.index.delete') ?>
+                            </a>
+						<?php } ?>
+                    </td>
+                </tr>
 			<?php } ?>
-			</tbody>
-			<tfoot>
-			<tr>
+            </tbody>
+            <tfoot>
+            <tr>
 				<?php foreach ($fields as $field => $val) { ?>
-					<td><?= $field ?></td>
+                    <td><?= $field ?></td>
 				<?php } ?>
-				<?php if ($admin || $user->isCurrent()) { ?>
-					<td></td>
-					<td></td>
-				<?php } ?>
-			</tr>
-			</tfoot>
-		</table>
-	</div>
+                <td></td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
 
 <script>

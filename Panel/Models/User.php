@@ -29,9 +29,11 @@ class User extends \Kirby\Panel\Models\User {
 
 	public function delete() {
 
-		if (!panel()->user()->isAdmin() and !$this->isCurrent()) {
-			throw new Exception(l('users.delete.error.permission'));
-		}
+		// create the delete event
+		$event = $this->event('delete:action');
+
+		// check for permissions
+		$event->check();
 
 		if (\c::get('userManager.folder', null) == null && $this->isLastAdmin()) {
 			// check the number of left admins to not delete the last one
@@ -49,7 +51,7 @@ class User extends \Kirby\Panel\Models\User {
 		// used somewhere on the site (i.e. for profiles)
 		kirby()->cache()->flush();
 
-		kirby()->trigger('panel.user.delete', $this);
+		kirby()->trigger($event, $this);
 
 	}
 
@@ -59,12 +61,11 @@ class User extends \Kirby\Panel\Models\User {
 		$event = $this->event('update:action');
 
 		// check for update permissions
-		$event->check();
 
 		// keep the old state of the user object
 		$old = clone $this;
 
-		if (!panel()->user()->isAdmin() and !$this->isCurrent()) {
+		if (!panel()->user()->isAdmin() and !$this->isCurrent() && !$event->check()) {
 			throw new Exception(l('users.form.error.update.rights'));
 		}
 
@@ -99,7 +100,6 @@ class User extends \Kirby\Panel\Models\User {
 		return $this;
 
 	}
-
 
 	public function topbar($topbar) {
 		$topbar->append(purl('userManagement'), "User Manager");

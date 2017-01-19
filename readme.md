@@ -1,8 +1,8 @@
 # Kirby User Manager Panel Extention
 
-![Version](https://img.shields.io/badge/version-0.4.6-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.3%2B-red.svg)
+![Version](https://img.shields.io/badge/version-0.5.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.4.1%2B-red.svg)
 
-*Version 0.4.5*
+*Version 0.5.0*
 
 This plugin adds a user manager pages to the kirby panel. It uses datatables to allow you to search and filter your users, it also allows you to decide on a   custom user folder (To seperate users from admins and editors), also if you use the custom folder you can have usernames that include @ and .
 
@@ -130,7 +130,10 @@ The following options can be set in your `/site/config/config.php` file:
 User Manager in general
 
 ```php
-c::set("userManager.folder","users"); // set a custom 
+
+c::set("userManager.title","User Manager"); // set the title of the widget
+
+c::set("userManager.folder","users"); // set a custom folder
 
 c::set('userManager.roles',['editor']); //can only create editor type user
 
@@ -194,8 +197,12 @@ There are two options:
 
 ## Changelog
 
+**0.5**
+- Added user permissions in accordance with kirby 2.4.1
+- You can now change the title of the widget
+
 **0.4.7**
-- You can now reliabl get the current user.
+- You can now reliably get the current user.
 
 **0.4.6**
 - It is now possible to specify what roles can be created in the manager.

@@ -2,8 +2,8 @@
 
 return [
 	'title' => [
-		'text' => 'User Management',
-		'link' => 'userManagement'
+		'text' => c::get('userManager.title','User Management'),
+		'link' => 'userManagement',
 	],
 	'options' => [
 		[
