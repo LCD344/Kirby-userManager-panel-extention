@@ -239,14 +239,14 @@ There are two options:
 - [ ] Mailchimp Extension
 - [ ] Stripe Extension
 - [x] Users in db
-- [ ] Include user permissions once kirby 2.4 is released
+- [x] Include user permissions once kirby 2.4 is released
 - [x] Set table fields from options
 - [x] Add user expiration field
 - [x] Enable/disable mailer page from options
 
 ## Requirements
 
-- [**Kirby**](https://getkirby.com/) 2.3+
+- [**Kirby**](https://getkirby.com/) 2.4+
 
 ## Disclaimer
 
