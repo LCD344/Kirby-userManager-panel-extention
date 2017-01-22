@@ -18,6 +18,13 @@
 			'filter' => ['auth', 'isInstalled']
 		],
 		[
+			'pattern' => 'userManagement/users',
+			'action' => 'users',
+			'controller' => $controllerName,
+			'filter' => 'auth',
+			'method' => 'POST|GET'
+		],
+		[
 			'pattern' => 'userManagement/add',
 			'action' => 'add',
 			'controller' => $controllerName,

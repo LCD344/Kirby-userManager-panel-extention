@@ -32,48 +32,52 @@
             </thead>
             <tbody>
 			<?php
-			foreach ($users as $user) {
-				$read = $user->ui()->read(); ?>
-                <tr>
-					<?php foreach ($fields as $field) { ?>
-                        <td>
-							<?php if (is_array($field)) {
-								if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') {
-									?>
-                                    <a href="<?= $read ? $user->url($field['action']) : '#' ?>">
-								<?php } ?>
-								<?= (isset($field['element']) ? "<{$field['element']} " : "") ?><?= (isset($field['class']) ? "class=\"{$field['class']}\" " : "") ?><?= (isset($field['element']) ? ">" : "") ?><?php __($user->{$field['name']}()) ?><?= (isset($field['element']) ? "</{$field['element']}>" : "") ?>
-								<?php if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') { ?>
+			if (!c::get('userManager.table.serverSide', false)) {
+				foreach ($users as $user) {
+					$read = $user->ui()->read(); ?>
+                    <tr>
+						<?php foreach ($fields as $field) { ?>
+                            <td>
+								<?php if (is_array($field)) {
+									if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') {
+										?>
+                                        <a href="<?= $read ? $user->url($field['action']) : '#' ?>">
+									<?php } ?>
+									<?= (isset($field['element']) ? "<{$field['element']} " : "") ?><?= (isset($field['class']) ? "class=\"{$field['class']}\" " : "") ?><?= (isset($field['element']) ? ">" : "") ?><?php __($user->{$field['name']}()) ?><?= (isset($field['element']) ? "</{$field['element']}>" : "") ?>
+									<?php if (isset($field['action']) && $field['action'] == 'edit' || $field['action'] == 'email') { ?>
+                                        </a>
+									<?php }
+								} else if ($field == "Avatar") { ?>
+                                    <a class="item-image-container" href="<?= $read ? $user->url('edit') : '#' ?>">
+                                        <img src="<?php __($user->avatar(50)->url()) ?>"
+                                             alt="<?php __($user->username()) ?>">
                                     </a>
-								<?php }
-							} else if ($field == "Avatar") { ?>
-                                <a class="item-image-container" href="<?= $read ? $user->url('edit') : '#' ?>">
-                                    <img src="<?php __($user->avatar(50)->url()) ?>"
-                                         alt="<?php __($user->username()) ?>">
+								<?php } else if ($field == "Role") {
+									__($user->role()->name());
+								} else {
+									__($user->$field());
+								} ?>
+                            </td>
+						<?php } ?>
+                        <td>
+							<?php if ($read && $user->ui()->update()) { ?>
+                                <a class="btn btn-with-icon" href="<?php __($user->url('edit')) ?>">
+									<?php i('pencil', 'left') . _l('users.index.edit') ?>
                                 </a>
-							<?php } else if ($field == "Role") {
-								__($user->role()->name());
-							} else {
-								__($user->$field());
-							} ?>
+							<?php } ?>
                         </td>
-					<?php } ?>
-                    <td>
-						<?php if ($read && $user->ui()->update()) { ?>
-                            <a class="btn btn-with-icon" href="<?php __($user->url('edit')) ?>">
-								<?php i('pencil', 'left') . _l('users.index.edit') ?>
-                            </a>
-						<?php } ?>
-                    </td>
-                    <td>
-						<?php if ($read && $user->ui()->delete()) { ?>
-                            <a data-modal class="btn btn-with-icon" href="<?php __($user->url('delete')) ?>">
-								<?php i('trash-o', 'left') . _l('users.index.delete') ?>
-                            </a>
-						<?php } ?>
-                    </td>
-                </tr>
-			<?php } ?>
+                        <td>
+							<?php if ($read && $user->ui()->delete()) { ?>
+                                <a data-modal class="btn btn-with-icon" href="<?php __($user->url('delete')) ?>">
+									<?php i('trash-o', 'left') . _l('users.index.delete') ?>
+                                </a>
+							<?php } ?>
+                        </td>
+                    </tr>
+					<?php
+				}
+			}
+			?>
             </tbody>
             <tfoot>
             <tr>
@@ -96,6 +100,11 @@
 		});
 	}).DataTable({
 		responsive: true,
-		autoWidth: false
+		autoWidth: false,
+		<?php if(c::get('userManager.table.serverSide', false)) { ?>
+		processing: true,
+		serverSide: true,
+		ajax: "userManagement/users"
+		<?php } ?>
 	});
 </script>

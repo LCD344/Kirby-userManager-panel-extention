@@ -8,6 +8,7 @@ use Kirby\Panel\Form;
 use lcd344\Mailer;
 use lcd344\Panel\Collections\Users;
 use lcd344\Panel\Models\User;
+use lcd344\Panel\ServerSideDatatable;
 use lcd344\Panel\Stubs\NewUser;
 use lcd344\Panel\Stubs\View;
 use Router;
@@ -213,6 +214,22 @@ class UserManagementController extends Base {
 			throw new Exception(l('fields.error.route.invalid'));
 		}
 
+	}
+
+	public function users(){
+		$users = new Users();
+		$users = $users->filter(function ($user) {
+			return $user->ui()->read();
+		});
+
+		$columns = c::get("userManager.fields", [
+			"Avatar" => "Avatar",
+			"Username" => ["name" => "Username", 'action' => "edit", 'element' => "strong", 'class' => "item-title"],
+			"Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
+			"Role" => "Role"
+		]);
+
+		echo \Response::json(ServerSideDatatable::search($users,$_GET,$columns));
 	}
 
 }

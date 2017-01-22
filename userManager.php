@@ -34,6 +34,10 @@
 			require_once __DIR__ .  DS .'Panel/Collections/Users.php';
 		}
 
+		if(c::get('userManager.table.serverSide',false)){
+			require_once __DIR__ .  DS .'Panel/Classes/ServerSideDatatable.php';
+		}
+
 		require_once __DIR__ .  DS .'Panel/Controllers/UserManagementController.php';
 		require_once __DIR__ .  DS .'Panel/Router/router.php';
 		$kirby->set('widget', 'userManagementWidget', __DIR__ .  DS .'Panel/Widgets//userManagementWidget');

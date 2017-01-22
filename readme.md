@@ -142,6 +142,8 @@ c::set("userManager.fields",[ //
     "Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
     "Role" => "Role"
 ])
+
+c::get('userManager.table.serverSide',false) // If set to true the datatable will function as a serverside datatable.
 ```
 
 Mailer extension
@@ -196,6 +198,9 @@ There are two options:
  All of the options are optional. Note: Avatar value is set especially to display the avatar.
 
 ## Changelog
+
+**0.5.1**
+- The datatable can now be a serverside or clientside datatable.
 
 **0.5**
 - Added user permissions in accordance with kirby 2.4.1
