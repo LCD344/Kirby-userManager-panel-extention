@@ -12,7 +12,7 @@
 		'charset' => 'utf8',
 		'collation' => 'utf8_unicode_ci',
 		'prefix' => ''
-	));
+	),'lcd344.userManager');
 
 	$capsule->bootEloquent();
 ?>

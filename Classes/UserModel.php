@@ -16,6 +16,7 @@
 
 		protected $table = 'users';
 		protected $guarded = [];
+		protected $connection = 'lcd344.userManager';
 
 		public function setCasts($casts) {
 			$this->casts = $casts;
