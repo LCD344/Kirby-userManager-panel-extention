@@ -151,11 +151,14 @@
 			// convert all keys to lowercase
 			$data = array_change_key_case($data, CASE_LOWER);
 
-/*			foreach ($data as $key => $val){
-				if (is_array($val)){
-					$data[$key] = json_encode($val);
+			if ($mode == 'insert') {
+				foreach ($data as $key => $val) {
+					if (is_array($val)) {
+						$data[$key] = json_encode($val);
+					}
 				}
-			}*/
+
+			}
 
 			// return the cleaned up data
 			return $data;
