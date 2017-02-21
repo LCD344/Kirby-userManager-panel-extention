@@ -6,6 +6,6 @@
 
 		public function __construct($file, array $data) {
 			parent::__construct($file, $data);
-			$this->_root = kirby()->roots()->plugins() . DS . "UserManager" . DS . "Panel" . DS . "Views";
+			$this->_root = kirby()->roots()->plugins() . DS . "userManager" . DS . "Panel" . DS . "Views";
 		}
 	}

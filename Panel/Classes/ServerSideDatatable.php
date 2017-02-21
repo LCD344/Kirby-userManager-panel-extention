@@ -38,23 +38,50 @@ class ServerSideDatatable {
 	 * @return \Collection
 	 */
 	protected static function filterData(\lcd344\Panel\Collections\Users $users, $request, $columns) {
-		/** @noinspection PhpParamsInspection */
-		$data = $users->filter(function ($user) use ($columns, $request) {
-			foreach ($columns as $column) {
-				if ($column != 'Avatar') {
-					if (is_array($column)) {
-						$content = $user->{$column['name']};
-					} else {
-						$content = $user->$column;
+		if(\c::get('userManager.database',false)){
+			$data = new \Collection();
+			$result = new UserModel;
+			$result = $result->newQuery()->where(function($query) use ($columns,$request){
+				foreach ($columns as $column) {
+					if ($column != 'Avatar') {
+						if (is_array($column)) {
+							$query->orWhere(strtolower($column['name']),'like',"%{$request}%");
+						} else {
+							$query->orWhere(strtolower($column),'like',"%{$request}%");
+						}
 					}
-					if (strpos($content, $request) !== false) {
-						return true;
-					}
+				}
+			})->select('username')->get();
+
+			$i = 0;
+			foreach ($result as $user){
+				$user = new \lcd344\Panel\Models\User($user->username);
+				if($user->ui()->read()){
+					$data->append($i,$user);
+					$i++;
 				}
 			}
 
-			return false;
-		});
+
+		} else {
+			/** @noinspection PhpParamsInspection */
+			$data = $users->filter(function ($user) use ($columns, $request) {
+				foreach ($columns as $column) {
+					if ($column != 'Avatar') {
+						if (is_array($column)) {
+							$content = $user->{$column['name']};
+						} else {
+							$content = $user->$column;
+						}
+						if (strpos($content, $request) !== false) {
+							return true;
+						}
+					}
+				}
+
+				return false;
+			});
+		}
 
 		return $data;
 	}
