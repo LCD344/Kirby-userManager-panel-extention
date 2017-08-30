@@ -1,6 +1,6 @@
 {
     "require": {
-        "illuminate/database": "^5.3",
-        "drewm/mailchimp-api": "^2.2"
+        "illuminate/database": "^5.5",
+        "drewm/mailchimp-api": "^2.4"
     }
 }
