@@ -8,7 +8,6 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
     );
 
@@ -17,6 +16,11 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\Translation\\' => 30,
+        ),
+        'P' => 
+        array (
+            'Psr\\SimpleCache\\' => 16,
+            'Psr\\Container\\' => 14,
         ),
         'I' => 
         array (
@@ -28,6 +32,7 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
         'D' => 
         array (
             'DrewM\\MailChimp\\' => 16,
+            'Doctrine\\Common\\Inflector\\' => 26,
         ),
         'C' => 
         array (
@@ -43,6 +48,14 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
         'Symfony\\Component\\Translation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
         ),
         'Illuminate\\Support\\' => 
         array (
@@ -64,19 +77,13 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
         array (
             0 => __DIR__ . '/..' . '/drewm/mailchimp-api/src',
         ),
+        'Doctrine\\Common\\Inflector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
+        ),
         'Carbon\\' => 
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
-        ),
-    );
-
-    public static $prefixesPsr0 = array (
-        'D' => 
-        array (
-            'Doctrine\\Common\\Inflector\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/doctrine/inflector/lib',
-            ),
         ),
     );
 
@@ -85,7 +92,6 @@ class ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit31ea44d3a3029843b430bbd282d2eb59::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

@@ -30,7 +30,7 @@ interface Paginator
     public function fragment($fragment = null);
 
     /**
-     * The the URL for the next page, or null.
+     * The URL for the next page, or null.
      *
      * @return string|null
      */
@@ -100,10 +100,18 @@ interface Paginator
     public function isEmpty();
 
     /**
+     * Determine if the list of items is not empty.
+     *
+     * @return bool
+     */
+    public function isNotEmpty();
+
+    /**
      * Render the paginator using a given view.
      *
      * @param  string|null  $view
+     * @param  array  $data
      * @return string
      */
-    public function render($view = null);
+    public function render($view = null, $data = []);
 }

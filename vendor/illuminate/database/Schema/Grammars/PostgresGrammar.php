@@ -8,6 +8,13 @@ use Illuminate\Database\Schema\Blueprint;
 class PostgresGrammar extends Grammar
 {
     /**
+     * If this Grammar supports schema changes wrapped in a transaction.
+     *
+     * @var bool
+     */
+    protected $transactions = true;
+
+    /**
      * The possible column modifiers.
      *
      * @var array
@@ -34,12 +41,11 @@ class PostgresGrammar extends Grammar
     /**
      * Compile the query to determine the list of columns.
      *
-     * @param  string  $table
      * @return string
      */
-    public function compileColumnExists($table)
+    public function compileColumnListing()
     {
-        return "select column_name from information_schema.columns where table_name = '$table'";
+        return 'select column_name from information_schema.columns where table_schema = ? and table_name = ?';
     }
 
     /**
@@ -51,13 +57,11 @@ class PostgresGrammar extends Grammar
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command)
     {
-        $columns = implode(', ', $this->getColumns($blueprint));
-
-        $sql = $blueprint->temporary ? 'create temporary' : 'create';
-
-        $sql .= ' table '.$this->wrapTable($blueprint)." ($columns)";
-
-        return $sql;
+        return sprintf('%s table %s (%s)',
+            $blueprint->temporary ? 'create temporary' : 'create',
+            $this->wrapTable($blueprint),
+            implode(', ', $this->getColumns($blueprint))
+        );
     }
 
     /**
@@ -69,11 +73,10 @@ class PostgresGrammar extends Grammar
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
     {
-        $table = $this->wrapTable($blueprint);
-
-        $columns = $this->prefixArray('add column', $this->getColumns($blueprint));
-
-        return 'alter table '.$table.' '.implode(', ', $columns);
+        return sprintf('alter table %s %s',
+            $this->wrapTable($blueprint),
+            implode(', ', $this->prefixArray('add column', $this->getColumns($blueprint)))
+        );
     }
 
     /**
@@ -99,13 +102,11 @@ class PostgresGrammar extends Grammar
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
     {
-        $table = $this->wrapTable($blueprint);
-
-        $index = $this->wrap($command->index);
-
-        $columns = $this->columnize($command->columns);
-
-        return "alter table $table add constraint {$index} unique ($columns)";
+        return sprintf('alter table %s add constraint %s unique (%s)',
+            $this->wrapTable($blueprint),
+            $this->wrap($command->index),
+            $this->columnize($command->columns)
+        );
     }
 
     /**
@@ -117,13 +118,12 @@ class PostgresGrammar extends Grammar
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
     {
-        $columns = $this->columnize($command->columns);
-
-        $index = $this->wrap($command->index);
-
-        $algorithm = $command->algorithm ? ' using '.$command->algorithm : '';
-
-        return "create index {$index} on ".$this->wrapTable($blueprint).$algorithm." ({$columns})";
+        return sprintf('create index %s on %s%s (%s)',
+            $this->wrap($command->index),
+            $this->wrapTable($blueprint),
+            $command->algorithm ? ' using '.$command->algorithm : '',
+            $this->columnize($command->columns)
+        );
     }
 
     /**
@@ -151,6 +151,28 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Compile the SQL needed to drop all tables.
+     *
+     * @param  string  $tables
+     * @return string
+     */
+    public function compileDropAllTables($tables)
+    {
+        return 'drop table "'.implode('","', $tables).'" cascade';
+    }
+
+    /**
+     * Compile the SQL needed to retrieve all table names.
+     *
+     * @param  string  $schema
+     * @return string
+     */
+    public function compileGetAllTables($schema)
+    {
+        return "select tablename from pg_catalog.pg_tables where schemaname = '{$schema}'";
+    }
+
+    /**
      * Compile a drop column command.
      *
      * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
@@ -161,9 +183,7 @@ class PostgresGrammar extends Grammar
     {
         $columns = $this->prefixArray('drop column', $this->wrapArray($command->columns));
 
-        $table = $this->wrapTable($blueprint);
-
-        return 'alter table '.$table.' '.implode(', ', $columns);
+        return 'alter table '.$this->wrapTable($blueprint).' '.implode(', ', $columns);
     }
 
     /**
@@ -175,9 +195,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropPrimary(Blueprint $blueprint, Fluent $command)
     {
-        $table = $blueprint->getTable();
-
-        $index = $this->wrap("{$table}_pkey");
+        $index = $this->wrap("{$blueprint->getTable()}_pkey");
 
         return 'alter table '.$this->wrapTable($blueprint)." drop constraint {$index}";
     }
@@ -191,11 +209,9 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropUnique(Blueprint $blueprint, Fluent $command)
     {
-        $table = $this->wrapTable($blueprint);
-
         $index = $this->wrap($command->index);
 
-        return "alter table {$table} drop constraint {$index}";
+        return "alter table {$this->wrapTable($blueprint)} drop constraint {$index}";
     }
 
     /**
@@ -207,9 +223,7 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropIndex(Blueprint $blueprint, Fluent $command)
     {
-        $index = $this->wrap($command->index);
-
-        return "drop index {$index}";
+        return "drop index {$this->wrap($command->index)}";
     }
 
     /**
@@ -221,11 +235,23 @@ class PostgresGrammar extends Grammar
      */
     public function compileDropForeign(Blueprint $blueprint, Fluent $command)
     {
-        $table = $this->wrapTable($blueprint);
-
         $index = $this->wrap($command->index);
 
-        return "alter table {$table} drop constraint {$index}";
+        return "alter table {$this->wrapTable($blueprint)} drop constraint {$index}";
+    }
+
+    /**
+     * Compile a rename table command.
+     *
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     */
+    public function compileRename(Blueprint $blueprint, Fluent $command)
+    {
+        $from = $this->wrapTable($blueprint);
+
+        return "alter table {$from} rename to ".$this->wrapTable($command->to);
     }
 
     /**
@@ -246,20 +272,6 @@ class PostgresGrammar extends Grammar
     public function compileDisableForeignKeyConstraints()
     {
         return 'SET CONSTRAINTS ALL DEFERRED;';
-    }
-
-    /**
-     * Compile a rename table command.
-     *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
-     * @return string
-     */
-    public function compileRename(Blueprint $blueprint, Fluent $command)
-    {
-        $from = $this->wrapTable($blueprint);
-
-        return "alter table {$from} rename to ".$this->wrapTable($command->to);
     }
 
     /**
@@ -318,7 +330,7 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Create the column definition for a integer type.
+     * Create the column definition for an integer type.
      *
      * @param  \Illuminate\Support\Fluent  $column
      * @return string
@@ -392,6 +404,17 @@ class PostgresGrammar extends Grammar
     protected function typeDouble(Fluent $column)
     {
         return 'double precision';
+    }
+
+    /**
+     * Create the column definition for a real type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    protected function typeReal(Fluent $column)
+    {
+        return 'real';
     }
 
     /**
@@ -472,7 +495,7 @@ class PostgresGrammar extends Grammar
      */
     protected function typeDateTime(Fluent $column)
     {
-        return 'timestamp(0) without time zone';
+        return "timestamp($column->precision) without time zone";
     }
 
     /**
@@ -483,7 +506,7 @@ class PostgresGrammar extends Grammar
      */
     protected function typeDateTimeTz(Fluent $column)
     {
-        return 'timestamp(0) with time zone';
+        return "timestamp($column->precision) with time zone";
     }
 
     /**
@@ -517,10 +540,10 @@ class PostgresGrammar extends Grammar
     protected function typeTimestamp(Fluent $column)
     {
         if ($column->useCurrent) {
-            return 'timestamp(0) without time zone default CURRENT_TIMESTAMP(0)';
+            return "timestamp($column->precision) without time zone default CURRENT_TIMESTAMP($column->precision)";
         }
 
-        return 'timestamp(0) without time zone';
+        return "timestamp($column->precision) without time zone";
     }
 
     /**
@@ -532,10 +555,10 @@ class PostgresGrammar extends Grammar
     protected function typeTimestampTz(Fluent $column)
     {
         if ($column->useCurrent) {
-            return 'timestamp(0) with time zone default CURRENT_TIMESTAMP(0)';
+            return "timestamp($column->precision) with time zone default CURRENT_TIMESTAMP($column->precision)";
         }
 
-        return 'timestamp(0) with time zone';
+        return "timestamp($column->precision) with time zone";
     }
 
     /**
