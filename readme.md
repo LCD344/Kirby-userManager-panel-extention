@@ -1,8 +1,8 @@
 # Kirby User Manager Panel Extention
 
-![Version](https://img.shields.io/badge/version-0.5.2-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.4.1%2B-red.svg)
+![Version](https://img.shields.io/badge/version-0.6.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Kirby Version](https://img.shields.io/badge/Kirby-2.4.1%2B-red.svg)
 
-*Version 0.5.2*
+*Version 0.6.0*
 
 This plugin adds a user manager pages to the kirby panel. It uses datatables to allow you to search and filter your users, it also allows you to decide on a   custom user folder (To seperate users from admins and editors), also if you use the custom folder you can have usernames that include @ and .
 
@@ -119,9 +119,11 @@ If you want to use the ORM directly, then you can use it with UserModel class fo
 UsersModel::where('username','john')->first();
 ```
 
-Full documentation of the ORM is in [Laravel eloquent](https://laravel.com/docs/5.3/eloquent)
+Full documentation of the ORM is in [Laravel eloquent](https://laravel.com/docs/5.5/eloquent)
 
-Details about enabling the bd are in the options section of this readme.
+To convert users from database to files and vice versa, you can choose the desired type of db (`c::set("userManager.database",true);` will convert to database and `c::set("userManager.database",false);` from database to files) and then run `php site\plugins\userManager\CLConvert.php` from kirby's main folder. Make sure that both the folders and the database are properly set up in the kirby options so the converter will know from where to where copy everything.
+
+Details about enabling the DB are in the options section of this readme.
 
 ## Options
 
@@ -199,6 +201,11 @@ There are two options:
 
 ## Changelog
 
+**0.6.0**
+- Added users converter form db and back
+- Fixed serverside datatable sorting
+- Database serverside datatable is now fast
+
 **0.5.2**
 - fixed view path issue
 
@@ -245,6 +252,7 @@ There are two options:
 
 ## Todo
 
+- [ ] Add Testing
 - [ ] Mailchimp Extension
 - [ ] Stripe Extension
 - [x] Users in db

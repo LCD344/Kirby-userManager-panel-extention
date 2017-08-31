@@ -8,8 +8,6 @@
 
 	namespace lcd344;
 
-
-	use c;
 	use Illuminate\Database\Eloquent\Model;
 
 	class UserModel extends Model {

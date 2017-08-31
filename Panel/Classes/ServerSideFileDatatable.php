@@ -9,7 +9,7 @@
 namespace lcd344\Panel;
 
 
-class ServerSideDatatable {
+class ServerSideFileDatatable {
 
 	public static function search(\lcd344\Panel\Collections\Users $users, $request, $columns) {
 
@@ -17,6 +17,18 @@ class ServerSideDatatable {
 		if ($request['search']['value'] != '') {
 			$data = self::filterData($data, $request['search']['value'], $columns);
 		}
+
+		$numberedColumns = array_values($columns);
+		$orderColumn = $numberedColumns[$request['order'][0]['column']];
+
+		if($orderColumn != 'Avatar'){
+			if(is_array($orderColumn)){
+				$data = $data->sortBy(strtolower($orderColumn['name']),$request['order'][0]['dir']);
+			} else {
+				$data = $data->sortBy(strtolower($orderColumn),$request['order'][0]['dir']);
+			}
+		}
+
 
 		$filteredData = $data->slice($request['start'], $request['length']);
 
@@ -38,50 +50,23 @@ class ServerSideDatatable {
 	 * @return \Collection
 	 */
 	protected static function filterData(\lcd344\Panel\Collections\Users $users, $request, $columns) {
-		if(\c::get('userManager.database',false)){
-			$data = new \Collection();
-			$result = new UserModel;
-			$result = $result->newQuery()->where(function($query) use ($columns,$request){
-				foreach ($columns as $column) {
-					if ($column != 'Avatar') {
-						if (is_array($column)) {
-							$query->orWhere(strtolower($column['name']),'like',"%{$request}%");
-						} else {
-							$query->orWhere(strtolower($column),'like',"%{$request}%");
-						}
+		/** @noinspection PhpParamsInspection */
+		$data = $users->filter(function ($user) use ($columns, $request) {
+			foreach ($columns as $column) {
+				if ($column != 'Avatar') {
+					if (is_array($column)) {
+						$content = $user->{$column['name']};
+					} else {
+						$content = $user->$column;
 					}
-				}
-			})->select('username')->get();
-
-			$i = 0;
-			foreach ($result as $user){
-				$user = new \lcd344\Panel\Models\User($user->username);
-				if($user->ui()->read()){
-					$data->append($i,$user);
-					$i++;
+					if (strpos($content, $request) !== false) {
+						return true;
+					}
 				}
 			}
 
-
-		} else {
-			/** @noinspection PhpParamsInspection */
-			$data = $users->filter(function ($user) use ($columns, $request) {
-				foreach ($columns as $column) {
-					if ($column != 'Avatar') {
-						if (is_array($column)) {
-							$content = $user->{$column['name']};
-						} else {
-							$content = $user->$column;
-						}
-						if (strpos($content, $request) !== false) {
-							return true;
-						}
-					}
-				}
-
-				return false;
-			});
-		}
+			return false;
+		});
 
 		return $data;
 	}
