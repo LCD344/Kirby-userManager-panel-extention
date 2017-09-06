@@ -205,8 +205,6 @@ class UserManagementController extends Base {
 
 				echo \Response::json($response);
 
-				/*					$form = $result->_data['content']->_data['form'];
-									$form->action($_SERVER['REQUEST_URI']);*/
 				exit();
 
 			}

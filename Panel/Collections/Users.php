@@ -10,6 +10,7 @@
 
 
 	use Exception;
+	use c;
 	use lcd344\ExtendedUsers;
 	use lcd344\Panel\Models\User;
 
@@ -19,8 +20,10 @@
 
 		public function create($data) {
 
-			if($data['password'] !== $data['passwordconfirmation']) {
-				throw new Exception(l('users.form.error.password.confirm'));
+			if(! c::get('userManager.overrideDefaultFields', false)){
+				if($data['password'] !== $data['passwordconfirmation']) {
+					throw new Exception(l('users.form.error.password.confirm'));
+				}
 			}
 
 			unset($data['passwordconfirmation']);
