@@ -62,7 +62,7 @@ return function ($user) {
 					];
 				}
 				if (!array_key_exists('roles', $overrideBlueprint['fields'])) {
-					$fields['roles'] = [
+					$fields['role'] = [
 						'label' => 'users.form.role.label',
 						'type' => 'select',
 						'required' => true,
