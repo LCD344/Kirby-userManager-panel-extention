@@ -34,6 +34,17 @@ return function ($user) {
 			$overrideBlueprint = yaml::read(kirby()->roots()->blueprints() . DS . 'users' . DS . 'userManager.override.yml');
 			if(isset($overrideBlueprint['fields']) && is_array($overrideBlueprint['fields'])){
 				$fields = $overrideBlueprint['fields'];
+				if(!array_key_exists('roles', $fields)){
+					$fields[] =  [
+						'label' => 'users.form.role.label',
+						'type' => 'select',
+						'required' => true,
+						'width' => '1/2',
+						'default' => site()->roles()->findDefault()->id(),
+						'options' => $roles,
+						'readonly' => (!panel()->user()->isAdmin() or ($user and $user->isLastAdmin()))
+					];
+				}
 			} else {
 				$fields = [
 					'noFields' => [
@@ -44,9 +55,14 @@ return function ($user) {
 			}
 		} else {
 			$fields = [
-				'noFile' => [
-					'label' => "Warning: You don't have a userManager.override.yml file.",
-					'type' => 'info'
+				'role' => [
+					'label' => 'users.form.role.label',
+					'type' => 'select',
+					'required' => true,
+					'width' => '1/2',
+					'default' => site()->roles()->findDefault()->id(),
+					'options' => $roles,
+					'readonly' => (!panel()->user()->isAdmin() or ($user and $user->isLastAdmin()))
 				],
 			];
 		}
