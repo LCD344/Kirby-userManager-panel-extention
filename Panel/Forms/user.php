@@ -2,25 +2,25 @@
 
 use Kirby\Panel\Event;
 
-return function($user) {
+return function ($user) {
 
-	$mode         = $user ? 'edit' : 'add';
-	$content      = $user ? $user->data() : array();
+	$mode = $user ? 'edit' : 'add';
+	$content = $user ? $user->data() : array();
 	$translations = array();
-	$roles        = array();
+	$roles = array();
 
 	// make sure the password is never shown in the form
 	unset($content['password']);
 
 	// add all languages
-	foreach(panel()->translations() as $code => $translation) {
+	foreach (panel()->translations() as $code => $translation) {
 		$translations[$code] = $translation->title();
 	}
 
 	// add all roles
-	foreach(site()->roles() as $role) {
-		if(c::get('userManager.roles',false)){
-			if(in_array($role->id(),c::get('userManager.roles')))
+	foreach (site()->roles() as $role) {
+		if (c::get('userManager.roles', false)) {
+			if (in_array($role->id(), c::get('userManager.roles')))
 				$roles[$role->id()] = $role->name();
 		} else {
 			$roles[$role->id()] = $role->name();
@@ -28,80 +28,104 @@ return function($user) {
 	}
 
 	// the default set of fields
-	$fields = array(
+	if (c::get('userManager.overrideDefaultFields', false)) {
 
-		'username' => array(
-			'label'     => 'users.form.username.label',
-			'type'      => 'text',
-			'icon'      => 'user',
-			'autofocus' => $mode != 'edit',
-			'required'  => true,
-			'help'      => $mode == 'edit' ? 'users.form.username.readonly' : 'users.form.username.help',
-			'readonly'  => $mode == 'edit',
-		),
+		if(file_exists(kirby()->roots()->blueprints() . DS . 'users' . DS . 'userManager.override.yml')){
+			$overrideBlueprint = yaml::read(kirby()->roots()->blueprints() . DS . 'users' . DS . 'userManager.override.yml');
+			if(isset($overrideBlueprint['fields']) && is_array($overrideBlueprint['fields'])){
+				$fields = $overrideBlueprint['fields'];
+			} else {
+				$fields = [
+					'noFields' => [
+						'label' => "Warning: You don't have fields defined in your userManager.override.yml file.",
+						'type' => 'info'
+					],
+				];
+			}
+		} else {
+			$fields = [
+				'noFile' => [
+					'label' => "Warning: You don't have a userManager.override.yml file.",
+					'type' => 'info'
+				],
+			];
+		}
+	} else {
+		$fields = array(
+			'username' => array(
+				'label' => 'users.form.username.label',
+				'type' => 'text',
+				'icon' => 'user',
+				'autofocus' => $mode != 'edit',
+				'required' => true,
+				'help' => $mode == 'edit' ? 'users.form.username.readonly' : 'users.form.username.help',
+				'readonly' => $mode == 'edit',
+			),
 
-		'firstName' => array(
-			'label'     => 'users.form.firstname.label',
-			'autofocus' => $mode == 'edit',
-			'type'      => 'text',
-			'width'     => '1/2',
-		),
+			'firstName' => array(
+				'label' => 'users.form.firstname.label',
+				'autofocus' => $mode == 'edit',
+				'type' => 'text',
+				'width' => '1/2',
+			),
 
-		'lastName' => array(
-			'label' => 'users.form.lastname.label',
-			'type'  => 'text',
-			'width' => '1/2',
-		),
+			'lastName' => array(
+				'label' => 'users.form.lastname.label',
+				'type' => 'text',
+				'width' => '1/2',
+			),
 
-		'email' => array(
-			'label'        => 'users.form.email.label',
-			'type'         => 'email',
-			'required'     => true,
-			'autocomplete' => false
-		),
+			'email' => array(
+				'label' => 'users.form.email.label',
+				'type' => 'email',
+				'required' => true,
+				'autocomplete' => false
+			),
 
-		'password' => array(
-			'label'      => $mode == 'edit' ? 'users.form.password.new.label' : 'users.form.password.label',
-			'required'   => $mode == 'add',
-			'type'       => 'password',
-			'width'      => '1/2',
-			'suggestion' => true,
-		),
+			'password' => array(
+				'label' => $mode == 'edit' ? 'users.form.password.new.label' : 'users.form.password.label',
+				'required' => $mode == 'add',
+				'type' => 'password',
+				'width' => '1/2',
+				'suggestion' => true,
+			),
 
-		'passwordConfirmation' => array(
-			'label'    => $mode == 'edit' ? 'users.form.password.new.confirm.label' : 'users.form.password.confirm.label',
-			'required' => $mode == 'add',
-			'type'     => 'password',
-			'width'    => '1/2',
-		),
+			'passwordConfirmation' => array(
+				'label' => $mode == 'edit' ? 'users.form.password.new.confirm.label' : 'users.form.password.confirm.label',
+				'required' => $mode == 'add',
+				'type' => 'password',
+				'width' => '1/2',
+			),
 
-		'language' => array(
-			'label'    => 'users.form.language.label',
-			'type'     => 'select',
-			'required' => true,
-			'width'    => '1/2',
-			'default'  => kirby()->option('panel.language', 'en'),
-			'options'  => $translations
-		),
+			'language' => array(
+				'label' => 'users.form.language.label',
+				'type' => 'select',
+				'required' => true,
+				'width' => '1/2',
+				'default' => kirby()->option('panel.language', 'en'),
+				'options' => $translations
+			),
 
-		'role' => array(
-			'label'    => 'users.form.role.label',
-			'type'     => 'select',
-			'required' => true,
-			'width'    => '1/2',
-			'default'  => site()->roles()->findDefault()->id(),
-			'options'  => $roles,
-			'readonly' => (!panel()->user()->isAdmin() or ($user and $user->isLastAdmin()))
-		),
+			'role' => array(
+				'label' => 'users.form.role.label',
+				'type' => 'select',
+				'required' => true,
+				'width' => '1/2',
+				'default' => site()->roles()->findDefault()->id(),
+				'options' => $roles,
+				'readonly' => (!panel()->user()->isAdmin() or ($user and $user->isLastAdmin()))
+			),
 
-	);
+		);
+	}
 
-	if($user) {
+
+	if ($user) {
 
 		// add all custom fields
-		foreach($user->blueprint()->fields()->toArray() as $name => $field) {
+		foreach ($user->blueprint()->fields()->toArray() as $name => $field) {
 
-			if(array_key_exists($name, $fields)) {
+			if (array_key_exists($name, $fields)) {
 				continue;
 			}
 
@@ -117,17 +141,17 @@ return function($user) {
 	// setup the url for the cancel button
 	$form->cancel('users');
 
-	if($mode == 'add') {
+	if ($mode == 'add') {
 		$form->buttons->submit->value = l('add');
 	}
 
-	if($user) {
+	if ($user) {
 		$event = $user->event('update:ui');
 	} else {
 		$event = panel()->user()->event('create:ui');
 	}
 
-	if($event->isDenied()) {
+	if ($event->isDenied()) {
 		$form->disable();
 		$form->centered = true;
 		$form->buttons->submit = '';

@@ -139,6 +139,8 @@ c::set("userManager.folder","users"); // set a custom folder
 
 c::set('userManager.roles',['editor']); //can only create editor type user
 
+c::set(); //override default fields, you will need to create a site\blueprints\users\userManager.override.yml file and define fields: key in it
+
 c::set("userManager.fields",[ //
     "Username" => ["name" => "Username", 'action' => "edit", 'element' => "strong", 'class' => "item-title"],
     "Email" => ['name' => "Email", 'action' => ((class_exists(Mailer::class)) ? "email" : "edit")],
@@ -200,6 +202,9 @@ There are two options:
  All of the options are optional. Note: Avatar value is set especially to display the avatar.
 
 ## Changelog
+
+**0.6.5**
+- Added a way to override default user fields
 
 **0.6.0**
 - Added users converter form db and back
